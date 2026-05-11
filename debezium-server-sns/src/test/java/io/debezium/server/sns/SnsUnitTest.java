@@ -22,8 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import io.debezium.runtime.BatchEvent;
-import io.debezium.runtime.CapturingEvents;
 import jakarta.enterprise.inject.Instance;
 
 import org.apache.kafka.connect.header.ConnectHeaders;
@@ -34,6 +32,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.debezium.engine.Header;
+import io.debezium.runtime.BatchEvent;
+import io.debezium.runtime.CapturingEvents;
 import io.debezium.testing.testcontainers.PostgresTestResourceLifecycleManager;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -180,7 +180,7 @@ public class SnsUnitTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static List<BatchEvent> createFifoChangeEvents(int size, Object rawKey, Object serializedKey,
-                                                                            String destination, Map<String, String> headerMap) {
+                                                           String destination, Map<String, String> headerMap) {
         List<BatchEvent> events = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             SourceRecord sourceRecord = mock(SourceRecord.class);
