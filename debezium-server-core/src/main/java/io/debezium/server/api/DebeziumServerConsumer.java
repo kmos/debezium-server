@@ -7,6 +7,7 @@ package io.debezium.server.api;
 
 import java.util.Optional;
 
+import io.debezium.runtime.Capturing;
 import io.debezium.server.BaseChangeConsumer;
 
 /**
@@ -28,6 +29,7 @@ import io.debezium.server.BaseChangeConsumer;
  */
 public interface DebeziumServerConsumer<T> {
 
+    @Capturing
     void handle(T events) throws InterruptedException;
 
     default Optional<Boolean> tombstoneSupport() {
