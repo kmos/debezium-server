@@ -114,7 +114,7 @@ public class MilvusChangeConsumer extends BaseChangeConsumer implements Debezium
 
             // Milvus does not support dots in collection names so we by default replace them
             // with underscores so the user does not need to provide router or mapper
-            final var collectionName = streamNameMapper.map(events.destination()).replace('.', '_');
+            final var collectionName = streamNameMapper.map(record.destination()).replace('.', '_');
 
             if (isSchemaChange(record.record())) {
                 LOGGER.debug("Schema change event, ignoring it");
