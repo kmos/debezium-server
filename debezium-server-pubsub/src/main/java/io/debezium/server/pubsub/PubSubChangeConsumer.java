@@ -230,7 +230,7 @@ public class PubSubChangeConsumer extends BaseChangeConsumer implements Debezium
 
         for (BatchEvent record : events.records()) {
             LOGGER.trace("Received event '{}'", record);
-            final String topicName = streamNameMapper.map(events.destination());
+            final String topicName = streamNameMapper.map(record.destination());
             Publisher publisher = publishers.computeIfAbsent(topicName, (x) -> publisherBuilder.get(ProjectTopicName.of(projectId, x)));
 
             PubsubMessage message = buildPubSubMessage(record);
