@@ -132,17 +132,17 @@ public class SnsChangeConsumer extends BaseChangeConsumer implements DebeziumSer
 
         // Group by destination (mapped topic ARN)
         Map<String, List<BatchEvent>> groupedByDestination = events.records().stream()
-                .collect(Collectors.groupingBy(record -> resolveTopicArn(events.destination())));
+                .collect(Collectors.groupingBy(record -> resolveTopicArn(record.destination())));
 
-        for (Map.Entry<String, List<BatchEvent>> destinationBatch : groupedByDestination.entrySet()) {
-            for (int i = 0; i < destinationBatch.getValue().size(); i += SnsChangeConsumerConfig.MAX_BATCH_SIZE) {
-                List<BatchEvent> batch = destinationBatch.getValue().subList(i, Math.min(i + SnsChangeConsumerConfig.MAX_BATCH_SIZE, destinationBatch.getValue().size()));
-                String topicArn = resolveTopicArn(destinationBatch.getKey());
+        for (List<BatchEvent> destinationBatch : groupedByDestination.values()) {
+            for (int i = 0; i < destinationBatch.size(); i += SnsChangeConsumerConfig.MAX_BATCH_SIZE) {
+                List<BatchEvent> batch = destinationBatch.subList(i, Math.min(i + SnsChangeConsumerConfig.MAX_BATCH_SIZE, destinationBatch.size()));
+                String topicArn = resolveTopicArn(batch.getFirst().destination());
                 boolean isFifo = topicArn.endsWith(".fifo");
 
                 List<PublishBatchRequestEntry> entries = new ArrayList<>(batch.size());
                 for (int j = 0; j < batch.size(); j++) {
-                    entries.add(buildEntry(batch.get(j), String.valueOf(i + j), isFifo, destinationBatch.getKey()));
+                    entries.add(buildEntry(batch.get(j), String.valueOf(i + j), isFifo));
                 }
 
                 sendBatchWithRetry(entries, topicArn);
@@ -197,9 +197,9 @@ public class SnsChangeConsumer extends BaseChangeConsumer implements DebeziumSer
         }
     }
 
-    private PublishBatchRequestEntry buildEntry(BatchEvent event, String batchEntryId, boolean isFifo, String destination) {
+    private PublishBatchRequestEntry buildEntry(BatchEvent event, String batchEntryId, boolean isFifo) {
         String messageBody = getMessageBody(event);
-        validatePayloadSize(messageBody, destination);
+        validatePayloadSize(messageBody, event.destination());
 
         PublishBatchRequestEntry.Builder builder = PublishBatchRequestEntry.builder()
                 .id(batchEntryId)
