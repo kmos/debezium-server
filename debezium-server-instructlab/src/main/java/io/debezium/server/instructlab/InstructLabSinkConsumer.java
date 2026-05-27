@@ -113,13 +113,13 @@ public class InstructLabSinkConsumer extends BaseChangeConsumer implements Debez
             if (record.value() != null) {
                 for (TaxonomyMapping mapping : mappings) {
                     // Filter by topic
-                    final Matcher matcher = mapping.topicPattern().matcher(events.destination());
+                    final Matcher matcher = mapping.topicPattern().matcher(record.destination());
                     if (!matcher.matches()) {
-                        LOGGER.trace("Skipped event for taxonomy {}, topic {} did not match.", mapping.name(), events.destination());
+                        LOGGER.trace("Skipped event for taxonomy {}, topic {} did not match.", mapping.name(), record.destination());
                         continue;
                     }
 
-                    LOGGER.trace("Processing taxonomy {} for topic {}", mapping.name(), events.destination());
+                    LOGGER.trace("Processing taxonomy {} for topic {}", mapping.name(), record.destination());
 
                     final String question = getChangeMappingValue(record, mapping.question());
                     final String answer = getChangeMappingValue(record, mapping.answer());
