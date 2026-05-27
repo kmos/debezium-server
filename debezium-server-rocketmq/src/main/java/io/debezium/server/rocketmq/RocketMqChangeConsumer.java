@@ -153,7 +153,7 @@ public class RocketMqChangeConsumer extends BaseChangeConsumer implements Debezi
         final CountDownLatch latch = new CountDownLatch(events.records().size());
         for (BatchEvent record : events.records()) {
             try {
-                final String topicName = streamNameMapper.map(events.destination());
+                final String topicName = streamNameMapper.map(record.destination());
                 String key = getString(record.key());
 
                 Message message = new Message(topicName, null, key, getBytes(record.value()));
@@ -172,7 +172,7 @@ public class RocketMqChangeConsumer extends BaseChangeConsumer implements Debezi
 
                     @Override
                     public void onException(Throwable throwable) {
-                        LOGGER.error("Failed to send record to {}:", events.destination(), throwable);
+                        LOGGER.error("Failed to send record to {}:", record.destination(), throwable);
                         throw new DebeziumException(throwable);
                     }
                 });
