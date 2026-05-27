@@ -128,7 +128,7 @@ public class PubSubLiteChangeConsumer extends BaseChangeConsumer implements Debe
         final List<ApiFuture<String>> deliveries = new ArrayList<>();
         for (BatchEvent record : events.records()) {
             LOGGER.trace("Received event '{}'", record);
-            final String topicName = streamNameMapper.map(events.destination());
+            final String topicName = streamNameMapper.map(record.destination());
 
             Publisher publisher = publishers.computeIfAbsent(topicName, (topic) -> publisherBuilder.get(topic));
 
