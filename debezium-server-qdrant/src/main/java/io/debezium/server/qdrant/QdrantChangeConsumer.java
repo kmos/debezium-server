@@ -115,7 +115,7 @@ public class QdrantChangeConsumer extends BaseChangeConsumer
         for (final BatchEvent record : events.records()) {
             LOGGER.trace("Received event '{}'", record);
 
-            final var collectionName = streamNameMapper.map(events.destination());
+            final var collectionName = streamNameMapper.map(record.destination());
 
             if (isSchemaChange(record.record())) {
                 LOGGER.debug("Schema change event, ignoring it");
