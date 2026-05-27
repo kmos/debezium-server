@@ -133,18 +133,18 @@ public class KinesisChangeConsumer extends BaseChangeConsumer implements Debeziu
         List<BatchEvent> batch = new ArrayList<>();
 
         // Group the records by destination
-        Map<String, List<BatchEvent>> segmentedBatches = events.records().stream().collect(Collectors.groupingBy(record -> events.destination()));
+        Map<String, List<BatchEvent>> segmentedBatches = events.records().stream().collect(Collectors.groupingBy(BatchEvent::destination));
 
         // Iterate over the segmentedBatches
-        for (Map.Entry<String, List<BatchEvent>> segmentedBatch : segmentedBatches.entrySet()) {
+        for (List<BatchEvent> segmentedBatch : segmentedBatches.values()) {
             // Iterate over the batch
 
-            for (int i = 0; i < segmentedBatch.getValue().size(); i += config.getBatchSize()) {
+            for (int i = 0; i < segmentedBatch.size(); i += config.getBatchSize()) {
 
                 // Create a sublist of the batch given the batchSize
-                batch = segmentedBatch.getValue().subList(i, Math.min(i + config.getBatchSize(), segmentedBatch.getValue().size()));
+                batch = segmentedBatch.subList(i, Math.min(i + config.getBatchSize(), segmentedBatch.size()));
                 List<PutRecordsRequestEntry> putRecordsRequestEntryList = new ArrayList<>();
-                streamName = segmentedBatch.getKey();
+                streamName = batch.get(0).destination();
 
                 for (BatchEvent record : batch) {
 
