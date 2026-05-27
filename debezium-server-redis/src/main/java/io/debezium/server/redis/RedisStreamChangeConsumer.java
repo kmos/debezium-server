@@ -193,7 +193,7 @@ public class RedisStreamChangeConsumer extends BaseChangeConsumer
                         List<SimpleEntry<String, Map<String, String>>> recordsMap = new ArrayList<>(clonedBatch.size());
                         List<BatchEvent> processedRecords = new ArrayList<BatchEvent>();
                         for (BatchEvent record : clonedBatch) {
-                            String destination = streamNameMapper.map(events.destination());
+                            String destination = streamNameMapper.map(record.destination());
 
                             // Check if this is a heartbeat message that should be skipped
                             if (config.isSkipHeartbeatMessages() && destination.startsWith(heartbeatPrefix)) {
