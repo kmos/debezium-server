@@ -92,7 +92,7 @@ public class PravegaChangeConsumer extends BaseChangeConsumer implements Debeziu
         @Override
         public void handle(CapturingEvents<BatchEvent> events) {
             for (BatchEvent changeEvent : events.records()) {
-                String streamName = streamNameMapper.map(events.destination());
+                String streamName = streamNameMapper.map(changeEvent.destination());
                 final EventStreamWriter<byte[]> writer = writers.computeIfAbsent(streamName, (stream) -> createWriter(stream));
                 if (changeEvent.key() != null) {
                     writer.writeEvent(getString(changeEvent.key()), getBytes(changeEvent.value()));
@@ -123,7 +123,7 @@ public class PravegaChangeConsumer extends BaseChangeConsumer implements Debeziu
         @Override
         public void handle(CapturingEvents<BatchEvent> events) {
             for (BatchEvent changeEvent : events.records()) {
-                String streamName = streamNameMapper.map(events.destination());
+                String streamName = streamNameMapper.map(changeEvent.destination());
                 final Transaction<byte[]> txn = txns.computeIfAbsent(streamName, (stream) -> createTxn(stream));
                 try {
                     if (changeEvent.key() != null) {
