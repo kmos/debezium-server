@@ -105,7 +105,7 @@ public class KafkaChangeConsumer extends BaseChangeConsumer implements DebeziumS
                 LOGGER.trace("Received event '{}'", record);
                 Headers headers = convertKafkaHeaders(record);
 
-                String topicName = streamNameMapper.map(events.destination());
+                String topicName = streamNameMapper.map(record.destination());
                 deliveryFutures.add(producer.send(new ProducerRecord<>(topicName, null, null, record.key(), record.value(), headers),
                         (metadata, exception) -> {
                             if (exception != null) {
@@ -136,7 +136,7 @@ public class KafkaChangeConsumer extends BaseChangeConsumer implements DebeziumS
                         recordMetadataFuture.get(config.getWaitMessageDeliveryTimeout(), TimeUnit.MILLISECONDS);
                     }
                     catch (TimeoutException e) {
-                        LOGGER.error("Timed out while waiting to send a record to '{}'", streamNameMapper.map(events.destination()));
+                        LOGGER.error("Timed out while waiting to send a record to '{}'", streamNameMapper.map(record.destination()));
                         throw new DebeziumException(e);
                     }
 
