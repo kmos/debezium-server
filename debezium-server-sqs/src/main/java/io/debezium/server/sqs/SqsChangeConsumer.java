@@ -107,7 +107,7 @@ public class SqsChangeConsumer extends BaseChangeConsumer implements DebeziumSer
             LOGGER.trace("Received event '{}'", record);
 
             int attempts = 0;
-            while (!recordSent(record, events.destination())) {
+            while (!recordSent(record, record.destination())) {
                 attempts++;
                 if (attempts >= DEFAULT_RETRIES) {
                     throw new DebeziumException("Exceeded maximum number of attempts to publish event " + record);
