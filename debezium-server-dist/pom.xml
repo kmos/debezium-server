@@ -281,6 +281,38 @@
                 <sink.jdbc.scope>test</sink.jdbc.scope>
                 <sink.databricks-zerobus.scope>test</sink.databricks-zerobus.scope>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.debezium</groupId>
+                    <artifactId>debezium-server-core</artifactId>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${version.assembly.plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>true</attach>  <!-- we want attach & deploy these to Maven -->
+                                    <descriptors>
+                                        <descriptor>src/main/resources/assemblies/${assembly.descriptor}.xml</descriptor>
+                                    </descriptors>
+                                    <tarLongFileMode>posix</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <!-- Individual sink profiles - override scope to compile -->
